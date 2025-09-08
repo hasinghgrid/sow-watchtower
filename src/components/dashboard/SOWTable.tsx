@@ -74,23 +74,56 @@ const mockContracts: SOWContract[] = [
 
 export const SOWTable = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("recent");
+  const [filterBy, setFilterBy] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("start-date-desc");
 
   const filteredContracts = mockContracts.filter((contract) => {
     const matchesSearch = contract.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contract.client.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || contract.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    
+    // Handle different filter types
+    if (filterBy === "all") return matchesSearch;
+    
+    // Filter by status
+    if (["active", "expiring", "expired", "completed"].includes(filterBy)) {
+      return matchesSearch && contract.status === filterBy;
+    }
+    
+    // Filter by client
+    if (filterBy.startsWith("client-")) {
+      const clientName = filterBy.replace("client-", "");
+      return matchesSearch && contract.client.toLowerCase() === clientName.toLowerCase();
+    }
+    
+    return matchesSearch;
   });
 
   const sortedContracts = [...filteredContracts].sort((a, b) => {
     switch (sortBy) {
-      case "name":
+      case "name-asc":
         return a.name.localeCompare(b.name);
-      case "date":
+      case "name-desc":
+        return b.name.localeCompare(a.name);
+      case "client-asc":
+        return a.client.localeCompare(b.client);
+      case "client-desc":
+        return b.client.localeCompare(a.client);
+      case "start-date-asc":
+        return new Date(a.startDate).getTime() - new Date(b.startDate).getTime();
+      case "start-date-desc":
         return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
-      case "recent":
+      case "end-date-asc":
+        return new Date(a.endDate).getTime() - new Date(b.endDate).getTime();
+      case "end-date-desc":
+        return new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
+      case "headcount-asc":
+        return a.headCount - b.headCount;
+      case "headcount-desc":
+        return b.headCount - a.headCount;
+      case "cost-asc":
+        return a.costPerHour - b.costPerHour;
+      case "cost-desc":
+        return b.costPerHour - a.costPerHour;
       default:
         return new Date(b.startDate).getTime() - new Date(a.startDate).getTime();
     }
@@ -112,28 +145,42 @@ export const SOWTable = () => {
             />
           </div>
           
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[140px]">
+          <Select value={filterBy} onValueChange={setFilterBy}>
+            <SelectTrigger className="w-[160px]">
               <Filter className="w-4 h-4 mr-2" />
-              <SelectValue />
+              <SelectValue placeholder="Filter by..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="expiring">Expiring</SelectItem>
-              <SelectItem value="expired">Expired</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="active">Status: Active</SelectItem>
+              <SelectItem value="expiring">Status: Expiring</SelectItem>
+              <SelectItem value="expired">Status: Expired</SelectItem>
+              <SelectItem value="completed">Status: Completed</SelectItem>
+              <SelectItem value="client-visa">Client: Visa</SelectItem>
+              <SelectItem value="client-pepsi">Client: Pepsi</SelectItem>
+              <SelectItem value="client-amazon">Client: Amazon</SelectItem>
+              <SelectItem value="client-google">Client: Google</SelectItem>
+              <SelectItem value="client-apple">Client: Apple</SelectItem>
             </SelectContent>
           </Select>
           
           <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[130px]">
-              <SelectValue />
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="recent">Recent</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="date">Date</SelectItem>
+              <SelectItem value="start-date-desc">Start Date (Newest)</SelectItem>
+              <SelectItem value="start-date-asc">Start Date (Oldest)</SelectItem>
+              <SelectItem value="end-date-desc">End Date (Latest)</SelectItem>
+              <SelectItem value="end-date-asc">End Date (Earliest)</SelectItem>
+              <SelectItem value="name-asc">Name (A-Z)</SelectItem>
+              <SelectItem value="name-desc">Name (Z-A)</SelectItem>
+              <SelectItem value="client-asc">Client (A-Z)</SelectItem>
+              <SelectItem value="client-desc">Client (Z-A)</SelectItem>
+              <SelectItem value="headcount-desc">Head Count (High-Low)</SelectItem>
+              <SelectItem value="headcount-asc">Head Count (Low-High)</SelectItem>
+              <SelectItem value="cost-desc">Cost/Hr (High-Low)</SelectItem>
+              <SelectItem value="cost-asc">Cost/Hr (Low-High)</SelectItem>
             </SelectContent>
           </Select>
           
