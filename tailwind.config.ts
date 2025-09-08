@@ -23,6 +23,32 @@ export default {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
         },
+        dashboard: {
+          primary: "hsl(var(--dashboard-primary))",
+          "primary-foreground": "hsl(var(--dashboard-primary-foreground))",
+        },
+        status: {
+          active: "hsl(var(--status-active))",
+          "active-bg": "hsl(var(--status-active-bg))",
+          expiring: "hsl(var(--status-expiring))",
+          "expiring-bg": "hsl(var(--status-expiring-bg))",
+          expired: "hsl(var(--status-expired))",
+          "expired-bg": "hsl(var(--status-expired-bg))",
+          completed: "hsl(var(--status-completed))",
+          "completed-bg": "hsl(var(--status-completed-bg))",
+        },
+        alert: {
+          warning: "hsl(var(--alert-warning))",
+          "warning-bg": "hsl(var(--alert-warning-bg))",
+          error: "hsl(var(--alert-error))",
+          "error-bg": "hsl(var(--alert-error-bg))",
+          success: "hsl(var(--alert-success))",
+          "success-bg": "hsl(var(--alert-success-bg))",
+        },
+        surface: {
+          elevated: "hsl(var(--card-elevated))",
+          subtle: "hsl(var(--surface-subtle))",
+        },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
